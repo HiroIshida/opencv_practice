@@ -26,15 +26,23 @@ int main(int argc, char **argv)
   // if you change it to , then it will read grayscale image
   //src_img = cv::imread("./pre.png", CV_LOAD_IMAGE_COLOR);
   cv::Mat src_img = cv::imread("./warota.jpg", 1);
-
-  //cv::Mat binary_img = gray_binarize(src_img);
-  //auto vec_img = three_functions(convert2gray(src_img));
-  auto src_img_overriden = face_detector(src_img);
-
-  cv::namedWindow("Image", 1);
-  cv::imshow("Image", src_img_overriden);
-  cv::waitKey(0);
-  //cv::namedWindow("Threshold", CV_WINDOW_AUTOSIZE);
+  
+  cv::VideoCapture cap(0);
+  if(!cap.isOpened())
+  {
+    print("cannot open correctly");
+    return -1;
+  }else{
+    print("usb cammera connected");
+  }
+  cv::Mat frame;
+  cv::namedWindow("capture", CV_WINDOW_AUTOSIZE);
+  while(cap.isOpened()){
+    cap.read(frame);
+    auto frame_overridden = face_detector(frame);
+    cv::imshow("Capture", frame_overridden);
+    cv::waitKey(5);
+  }
 }
 
 cv::Mat convert2gray(const cv::Mat& src_img)
@@ -109,7 +117,8 @@ cv::Mat face_detector(const cv::Mat& src_img)
     center.y = cvRound(r->y + r->height*0.5);
     radius = cvRound((r->width + r->height)*0.25);
     int i = std::distance(faces.begin(), r);//TODO 
-    cv::circle(src_gray_overriden, center, radius, colors[i%8], 3, 8, 0);
+    print(i);
+    cv::circle(src_gray_overriden, center, radius, colors[0], 3, 8, 0);
   }
   return src_gray_overriden;
 }
